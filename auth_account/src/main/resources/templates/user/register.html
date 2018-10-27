@@ -6,22 +6,34 @@
     <meta name="_csrf_token" th:content="${_csrf_token}"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login_register.css}" href="./css/login_register.css">
     <title>注册- 用户认证系统</title>
 </head>
 <body>
-<form th:href="@{/admin}" th:action="@{/api/user/register}" onsubmit="return false">
-    <header>注册- 用户认证系统</header>
-    <div class="form-item">
-        <label for="username">用户名</label>
-        <input type="text" id="username" name="username" required>
-    </div>
-    <div class="form-item">
-        <label for="password">密码</label>
-        <input type="password" id="password" name="password" required>
-    </div>
-    <a th:href="@{/login}">登陆</a>
-    <input type="submit">
-</form>
+    <div class="left-fill"></div>
+    <form class="form-frame" th:href="@{/admin}" th:action="@{/api/user/register}" onsubmit="return false">
+         <header>
+            <div class="title">用户认证系统</div>
+            <div class="navbar">
+                <div class="fill"></div>
+                <a href="./login.html" th:href="@{/login}">登陆</a>
+                <span>注册</span>
+                <div class="fill"></div>
+            </div>
+        </header>
+        <div class="form-item">
+            <label for="username">用户名</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-item">
+            <label for="password">密码</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="submit">
+            <button>注册</button>
+        </div>
+    </form>
+    <div class="right-fill"></div>
 
 <script src="//cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script th:src="@{/js/common/csrf.js}"></script>

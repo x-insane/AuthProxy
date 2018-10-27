@@ -1,14 +1,18 @@
 $("form").submit(function() {
     var redirect = $(this).attr("href");
+    $(".submit").addClass("loading");
+    $(".result").text("");
     $.post(this.action, $(this).serialize())
         .done(function(data) {
-            console.log(data);
             if (data.error === 0 && redirect)
                 location.href = redirect;
             else
-                alert(data.msg);
+                $(".result").text(data.msg);
         })
         .fail(function (data) {
-            console.warn(data)
+            $(".result").text("网络错误，请稍后再试");
+        })
+        .always(function() {
+            $(".submit").removeClass("loading");
         })
 });

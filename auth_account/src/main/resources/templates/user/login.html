@@ -6,26 +6,41 @@
     <meta name="_csrf_token" th:content="${_csrf_token}"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login_register.css}" href="./css/login_register.css">
     <title>登陆到用户认证系统</title>
 </head>
 <body>
-    <form th:href="@{/admin}" th:action="@{/api/user/login}" onsubmit="return false">
-        <header>登陆到用户认证系统</header>
+	<div class="left-fill"></div>
+    <form class="form-frame" th:href="@{/admin}" th:action="@{/api/user/login}" onsubmit="return false">
+        <header>
+        	<div class="title">用户认证系统</div>
+        	<div class="navbar">
+        		<div class="fill"></div>
+        		<span>登陆</span>
+        		<a href="./register.html" th:href="@{/register}">注册</a>
+        		<div class="fill"></div>
+        	</div>
+        </header>
         <div class="form-item">
-            <label for="username">用户名/邮箱/手机号</label>
+            <label for="username">用户名/手机号/邮箱</label>
             <input type="text" id="username" name="username" required>
         </div>
         <div class="form-item">
             <label for="password">密码</label>
             <input type="password" id="password" name="password" required>
         </div>
-        <a th:href="@{/register}">注册</a>
-        <a th:href="@{/reset-password}">找回密码</a>
-        <input type="submit">
+        <div class="extra">
+        	<a href="./reset-password.html" th:href="@{/reset-password}">忘记密码</a>
+        </div>
+        <div class="result"></div>
+        <div class="submit">
+        	<button>登陆</button>
+        </div>
     </form>
+	<div class="right-fill"></div>
 
-    <script src="//cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script th:src="@{/js/common/csrf.js}"></script>
-    <script th:src="@{/js/login_register.js}"></script>
+    <script th:src="@{/js/login_register.js}" src="./js/login_register.js"></script>
 </body>
 </html>
