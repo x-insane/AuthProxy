@@ -17,7 +17,11 @@ public class ApiResult extends HashMap<String, Object> {
         return new Builder();
     }
 
-    private static class Builder {
+    public static Builder builder(int error, String msg) {
+        return new Builder().set("error", error).set("msg", msg);
+    }
+
+    public static class Builder {
         private ApiResult result = new ApiResult();
         public Builder set(String key, Object value) {
             result.put(key, value);
