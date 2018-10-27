@@ -21,7 +21,7 @@ public class QConfigEntity extends EntityPathBase<ConfigEntity> {
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
-    public final StringPath name = createString("name");
+    public final StringPath key = createString("key");
 
     public final StringPath value = createString("value");
 

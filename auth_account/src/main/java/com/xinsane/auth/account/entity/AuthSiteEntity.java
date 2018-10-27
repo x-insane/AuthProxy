@@ -13,6 +13,7 @@ public class AuthSiteEntity {
 
     @Id
     @Column(name = "site_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getSiteId() {
         return siteId;
     }

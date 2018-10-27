@@ -1,4 +1,4 @@
-package com.xinsane.auth.account.controller.rest;
+package com.xinsane.auth.account.controller.rest.user;
 
 import com.xinsane.auth.account.entity.*;
 import com.xinsane.auth.account.entity_helper.AuthHelper;
