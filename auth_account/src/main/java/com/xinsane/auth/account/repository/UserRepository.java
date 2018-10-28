@@ -13,12 +13,12 @@ public interface UserRepository extends CrudRepository<UserEntity, Integer> {
      * 检查用户是否有某全局权限
      * @param userId 用户id
      * @param authKey 权限key
-     * @return 若有指定权限则返回1，否则返回0
+     * @return 若有指定权限则返回true，否则返回false
      */
-    @Query("SELECT COUNT(au.id) FROM AuthGlobalUserEntity au " +
+    @Query("SELECT (COUNT(au.id) > 0) FROM AuthGlobalUserEntity au " +
             "INNER JOIN AuthGlobalEntity a ON a.authKey=?2 AND a.authId=au.authId " +
             "WHERE au.userId=?1")
-    long hasAuth(int userId, String authKey);
+    boolean hasAuth(int userId, String authKey);
 
     /**
      * 查询用户拥有的所有全局权限

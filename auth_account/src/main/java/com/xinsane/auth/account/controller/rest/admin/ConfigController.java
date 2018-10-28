@@ -71,7 +71,7 @@ public class ConfigController {
         UserEntity user = (UserEntity) session.getAttribute("user");
         if (user == null)
             return new ApiResult(403, "未登录");
-        if (userRepository.hasAuth(user.getUserId(), "config") == 0)
+        if (!userRepository.hasAuth(user.getUserId(), "config"))
             return new ApiResult(403, "权限不足");
         return null;
     }

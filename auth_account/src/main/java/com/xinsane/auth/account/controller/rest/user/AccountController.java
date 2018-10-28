@@ -42,7 +42,7 @@ public class AccountController {
 
         if (user == null || !user.getPassword().equals(password))
             return new ApiResult(403, "账号或密码错误");
-        if (userRepository.hasAuth(user.getUserId(), "login") == 0)
+        if (!userRepository.hasAuth(user.getUserId(), "login"))
             return new ApiResult(401, "该账号已被禁止登录");
 
         session.setAttribute("user", user);

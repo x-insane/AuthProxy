@@ -9,8 +9,8 @@ public class AuthSiteUserEntity {
     private int id;
     private int siteId;
     private int userId;
-    private byte shareable;
-    private byte manageable;
+    private boolean shareable;
+    private boolean manageable;
 
     @Id
     @Column(name = "id")
@@ -47,22 +47,22 @@ public class AuthSiteUserEntity {
 
     @Basic
     @Column(name = "shareable")
-    public byte getShareable() {
+    public boolean getShareable() {
         return shareable;
     }
 
-    public AuthSiteUserEntity setShareable(byte shareable) {
+    public AuthSiteUserEntity setShareable(boolean shareable) {
         this.shareable = shareable;
         return this;
     }
 
     @Basic
     @Column(name = "manageable")
-    public byte getManageable() {
+    public boolean getManageable() {
         return manageable;
     }
 
-    public AuthSiteUserEntity setManageable(byte manageable) {
+    public AuthSiteUserEntity setManageable(boolean manageable) {
         this.manageable = manageable;
         return this;
     }

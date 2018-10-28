@@ -13,6 +13,7 @@ public class AuthPageEntity {
 
     @Id
     @Column(name = "page_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getPageId() {
         return pageId;
     }
