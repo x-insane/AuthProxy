@@ -56,7 +56,7 @@ public class ConfigController {
         return new ApiResult(0, value);
     }
 
-    @RequestMapping("query-all")
+    @RequestMapping("query_all")
     public ApiResult queryAll(HttpSession session) {
         ApiResult check = checkAuth(session);
         if (check != null)

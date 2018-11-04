@@ -42,6 +42,10 @@ public class SiteController {
         this.pageUserRepository = pageUserRepository;
     }
 
+    /**
+     * 获取能够管理的站点的所有页面
+     * - 按站点分类
+     */
     @RequestMapping("page/list")
     public ApiResult page_list(HttpSession session) {
         UserEntity user = (UserEntity) session.getAttribute("user");

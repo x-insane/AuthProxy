@@ -250,7 +250,6 @@ CREATE TABLE IF NOT EXISTS `login_auth_token` (
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户id',
-  `user_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0-普通用户；1-管理员；2-超级管理员',
   `username` varchar(255) NOT NULL COMMENT '用户名',
   `password` varchar(255) NOT NULL COMMENT '登录密码',
   `email` varchar(255) DEFAULT NULL COMMENT '用户电子邮箱（可用于找回密码）',

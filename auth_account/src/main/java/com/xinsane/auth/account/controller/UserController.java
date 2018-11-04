@@ -41,7 +41,7 @@ public class UserController implements CsrfFilter.CsrfInterface {
         return "user/register";
     }
 
-    @RequestMapping("reset-password")
+    @RequestMapping("reset_password")
     public String reset_password(Model model) {
         return "user/reset-password";
     }

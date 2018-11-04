@@ -5,10 +5,9 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user", schema = "auth_proxy", catalog = "")
+@Table(name = "user", schema = "auth_proxy")
 public class UserEntity {
     private int userId;
-    private byte userType;
     private String username;
     private String password;
     private String email;
@@ -21,7 +20,6 @@ public class UserEntity {
     public String toString() {
         return "UserEntity{" +
                 "userId=" + userId +
-                ", userType=" + userType +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
@@ -41,17 +39,6 @@ public class UserEntity {
 
     public UserEntity setUserId(int userId) {
         this.userId = userId;
-        return this;
-    }
-
-    @Basic
-    @Column(name = "user_type")
-    public byte getUserType() {
-        return userType;
-    }
-
-    public UserEntity setUserType(byte userType) {
-        this.userType = userType;
         return this;
     }
 
@@ -138,7 +125,6 @@ public class UserEntity {
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity that = (UserEntity) o;
         return userId == that.userId &&
-                userType == that.userType &&
                 inviterId == that.inviterId &&
                 parentId == that.parentId &&
                 Objects.equals(username, that.username) &&
@@ -150,7 +136,6 @@ public class UserEntity {
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(userId, userType, username, password, email, phone, inviterId, parentId, createTime);
+        return Objects.hash(userId, username, password, email, phone, inviterId, parentId, createTime);
     }
 }

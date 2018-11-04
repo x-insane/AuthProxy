@@ -78,7 +78,7 @@ public class SitesController {
         return new ApiResult();
     }
 
-    @RequestMapping("query-all")
+    @RequestMapping("query_all")
     public ApiResult query_all(HttpSession session) {
         ApiResult result = checkAuth(session);
         if (result != null)
