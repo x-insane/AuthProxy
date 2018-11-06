@@ -40,4 +40,6 @@ public interface UserRepository extends CrudRepository<UserEntity, Integer> {
     UserEntity findFirstByUsername(String username);
     UserEntity findFirstByEmail(String email);
     UserEntity findFirstByPhone(String phone);
+    boolean existsByPhone(String phone);
+    boolean existsByEmail(String email);
 }

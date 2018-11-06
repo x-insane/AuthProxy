@@ -23,20 +23,20 @@ public class CsrfFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-//        HttpServletRequest req = (HttpServletRequest) request;
-//        HttpSession session = req.getSession();
-//        String csrf_key = req.getHeader("_csrf_key");
-//        String csrf_token = req.getHeader("_csrf_token");
-//        if (!req.getMethod().equals("POST") ||
-//                session == null || csrf_key == null || csrf_token == null ||
-//                !csrf_token.equals(session.getAttribute(csrf_key))) {
-//            response.setContentType("application/json; charset=utf-8");
-//            PrintWriter writer = response.getWriter();
-//            writer.write(new Gson().toJson(new ApiResult(403, "拒绝访问")));
-//            writer.flush();
-//            writer.close();
-//            return;
-//        }
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpSession session = req.getSession();
+        String csrf_key = req.getHeader("_csrf_key");
+        String csrf_token = req.getHeader("_csrf_token");
+        if (!req.getMethod().equals("POST") ||
+                session == null || csrf_key == null || csrf_token == null ||
+                !csrf_token.equals(session.getAttribute(csrf_key))) {
+            response.setContentType("application/json; charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            writer.write(new Gson().toJson(new ApiResult(403, "拒绝访问")));
+            writer.flush();
+            writer.close();
+            return;
+        }
         chain.doFilter(request,response);
     }
 

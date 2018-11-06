@@ -32,22 +32,24 @@ public class UserController implements CsrfFilter.CsrfInterface {
     }
 
     @RequestMapping("login")
-    public String login(Model model) {
+    public String login() {
         return "user/login";
     }
 
     @RequestMapping("register")
-    public String register(Model model) {
+    public String register() {
         return "user/register";
     }
 
     @RequestMapping("reset_password")
-    public String reset_password(Model model) {
+    public String reset_password() {
         return "user/reset-password";
     }
 
-    @RequestMapping("admin")
-    public String admin(Model model) {
+    @RequestMapping({"/", "/admin"})
+    public String admin(HttpSession session) {
+        if (session.getAttribute("user") == null)
+            return "redirect:/login";
         return "admin";
     }
 

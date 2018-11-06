@@ -13,6 +13,10 @@ public class ApiResult extends HashMap<String, Object> {
         put("msg", msg);
     }
 
+    public static Element element() {
+        return new Element();
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -29,6 +33,13 @@ public class ApiResult extends HashMap<String, Object> {
         }
         public ApiResult build() {
             return result;
+        }
+    }
+
+    public static class Element extends HashMap<String, Object> {
+        public Element set(String key, Object value) {
+            super.put(key, value);
+            return this;
         }
     }
 }

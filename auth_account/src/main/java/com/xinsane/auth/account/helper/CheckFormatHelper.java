@@ -12,7 +12,7 @@ public class CheckFormatHelper {
     }
 
     public static boolean checkPhone(String string) {
-        return regMatch("^1[34578]\\d{9}$", string);
+        return regMatch("^1[2345789]\\d{9}$", string);
     }
 
     private static boolean regMatch(String reg, String text) {

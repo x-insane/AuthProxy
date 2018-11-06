@@ -11,7 +11,7 @@
 </head>
 <body>
 	<div class="left-fill"></div>
-    <form class="form-frame" th:href="@{/admin}" th:action="@{/api/user/login}" onsubmit="return false">
+    <form class="form-frame" th:href="@{/admin/}" th:action="@{/api/user/login}" onsubmit="return false">
         <header>
         	<div class="title">用户认证系统</div>
         	<div class="navbar">
@@ -29,6 +29,21 @@
             <label for="password">密码</label>
             <input type="password" id="password" name="password" required>
         </div>
+        <div class="form-item">
+            <div id="captcha">
+                <div id="text">
+                    行为验证™ 安全组件加载中
+                </div>
+                <div id="wait" class="show">
+                    <div class="loading">
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="extra">
         	<a href="./reset-password.html" th:href="@{/reset-password}">忘记密码</a>
         </div>
@@ -41,6 +56,7 @@
 
     <script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script th:src="@{/js/common/csrf.js}"></script>
+    <script th:src="@{/js/gt.js}"></script>
     <script th:src="@{/js/login_register.js}" src="./js/login_register.js"></script>
 </body>
 </html>
