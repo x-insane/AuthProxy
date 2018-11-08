@@ -64,8 +64,18 @@ public class UserController implements CsrfFilter.CsrfInterface {
         if (user == null)
             return "redirect:/forget-password";
 
-        model.addAttribute("email", user.getEmail());
-        model.addAttribute("phone", user.getPhone());
+        String phone = user.getPhone();
+        if (phone != null) {
+            phone = phone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+            model.addAttribute("phone", phone);
+        }
+
+        String email = user.getEmail();
+        if (email != null) {
+            email = email.replaceAll("(\\w?)(\\w+)(\\w)(@\\w+\\.[a-z]+(\\.[a-z]+)?)", "$1****$3$4");
+            model.addAttribute("email", email);
+        }
+
         return "user/forget-password/auth";
     }
 
