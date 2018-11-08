@@ -1,15 +1,14 @@
 package com.xinsane.auth.account.controller.rest.admin;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.xinsane.auth.account.entity.ConfigEntity;
 import com.xinsane.auth.account.entity.UserEntity;
 import com.xinsane.auth.account.repository.ConfigRepository;
 import com.xinsane.auth.account.repository.UserRepository;
 import com.xinsane.auth.account.transfer.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -28,10 +27,14 @@ public class ConfigController {
     }
 
     @RequestMapping
-    public ApiResult index(@RequestParam String key, @RequestParam String value, HttpSession session) {
+    public ApiResult index(@RequestBody String json, HttpSession session) {
         ApiResult check = checkAuth(session);
         if (check != null)
             return check;
+
+        JsonObject object = new JsonParser().parse(json).getAsJsonObject();
+        String key = object.get("key").getAsString();
+        String value = object.get("value").getAsString();
 
         ConfigEntity config = configRepository.queryByKey(key);
         if (config == null)
@@ -40,21 +43,38 @@ public class ConfigController {
             config.setValue(value);
         configRepository.save(config);
 
-        return new ApiResult();
+        return ApiResult.builder().set("config", config).build();
     }
 
-    @RequestMapping("query")
-    public ApiResult query(@RequestParam String key, HttpSession session) {
+    @RequestMapping("delete")
+    public ApiResult delete(@RequestBody String json, HttpSession session) {
         ApiResult check = checkAuth(session);
         if (check != null)
             return check;
 
-        String value = configRepository.value(key);
-        if (value == null)
+        JsonObject object = new JsonParser().parse(json).getAsJsonObject();
+        String key = object.get("key").getAsString();
+
+        ConfigEntity config = configRepository.queryByKey(key);
+        if (config == null)
             return new ApiResult(404, "不存在该配置");
 
-        return new ApiResult(0, value);
+        configRepository.delete(config);
+        return new ApiResult();
     }
+
+//    @RequestMapping("query")
+//    public ApiResult query(@RequestParam String key, HttpSession session) {
+//        ApiResult check = checkAuth(session);
+//        if (check != null)
+//            return check;
+//
+//        String value = configRepository.value(key);
+//        if (value == null)
+//            return new ApiResult(404, "不存在该配置");
+//
+//        return new ApiResult(0, value);
+//    }
 
     @RequestMapping("query_all")
     public ApiResult queryAll(HttpSession session) {
@@ -62,9 +82,7 @@ public class ConfigController {
         if (check != null)
             return check;
 
-        ConfigsResult result = new ConfigsResult();
-        result.configs = configRepository.queryAll();
-        return result;
+        return ApiResult.builder().set("configs", configRepository.queryAll()).build();
     }
 
     private ApiResult checkAuth(HttpSession session) {

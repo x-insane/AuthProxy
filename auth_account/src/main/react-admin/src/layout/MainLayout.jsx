@@ -5,16 +5,27 @@ import {Link, Switch, Redirect, Route, withRouter} from 'react-router-dom';
 import {Layout, Menu, Icon} from 'antd';
 import HomePage from "../pages/HomePage";
 import AccountPage from "../pages/AccountPage";
+import SitePagePage from "../pages/SitePagePage";
+import SettingPage from "../pages/SettingPage";
 
 class MainLayout extends Component {
 	state = {
-		collapsed: false,
+		collapsed: false
 	};
 
 	onCollapse = (collapsed) => {
-		console.log(collapsed);
 		this.setState({ collapsed });
 	};
+
+	coverClick = () => {
+	    if (window.innerWidth <= 768) {
+	        this.setState({
+                collapsed: true
+            })
+        }
+    };
+
+	Cover = () => <div className="page-sider-cover" onClick={this.coverClick} />;
 
 	render() {
 		return (
@@ -32,7 +43,7 @@ class MainLayout extends Component {
 
 					<Menu theme="dark" defaultSelectedKeys={[
                             this.props.location.pathname === "/" ? "/home" : this.props.location.pathname
-                        ]} mode="inline">
+                        ]} mode="inline" onClick={this.coverClick}>
 
 						<Menu.Item key="/home">
 							<Icon type="user" theme="outlined" />
@@ -96,11 +107,16 @@ class MainLayout extends Component {
 					</Menu>
 				</Layout.Sider>
 
-				<Switch>
+                { this.state.collapsed ? "" : <this.Cover /> }
+
+                <Switch onClick={this.pageClick}>
                     <Route exact path='/' render={() => <Redirect to={"/home"}/>}/>
                     <Route path="/home" component={HomePage}/>
                     <Route path="/account" component={AccountPage}/>
+                    <Route path="/site-page" component={SitePagePage}/>
+                    <Route path="/setting" component={SettingPage}/>
                 </Switch>
+
 			</Layout>
 		);
 	}

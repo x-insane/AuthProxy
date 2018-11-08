@@ -11,7 +11,7 @@ const { Panel } = Collapse;
 class AccountPage extends React.Component {
     render() {
         return <Layout>
-            <HeaderLayout text={"账户管理"} />
+            <HeaderLayout text="账户管理" />
             <Layout.Content>
                 <Collapse accordion defaultActiveKey={"1"}>
                     <Panel header="修改密码" key="1">

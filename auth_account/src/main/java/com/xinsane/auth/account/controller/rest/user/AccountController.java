@@ -67,14 +67,7 @@ public class AccountController {
 //        if (!geetestController.verify_captcha(GeetestLib.RequestData.loadFromParam(request), request))
 //            return new ApiResult(403, "未通过人机验证");
 
-        UserEntity user;
-        if (CheckFormatHelper.checkEmail(username))
-            user = userRepository.findFirstByEmail(username);
-        else if (CheckFormatHelper.checkPhone(username))
-            user = userRepository.findFirstByPhone(username);
-        else
-            user = userRepository.findFirstByUsername(username);
-
+        UserEntity user = userRepository.findUserByLoginName(username);
         if (user == null || !user.getPassword().equals(password))
             return new ApiResult(403, "账号或密码错误");
         if (!userRepository.hasAuth(user.getUserId(), "login"))
@@ -218,7 +211,7 @@ public class AccountController {
         String email = object.get("email").getAsString();
         if (!CheckFormatHelper.checkEmail(email))
             return new ApiResult(401, "邮箱格式不正确");
-        if (userRepository.existsByPhone(email))
+        if (userRepository.existsByEmail(email))
             return new ApiResult(402, "该邮箱已绑定过账号");
 
         String old_email = (String) session.getAttribute("bind_email");
@@ -272,18 +265,104 @@ public class AccountController {
         return new ApiResult();
     }
 
-    @RequestMapping("reset_password_notify_phone")
-    public ApiResult reset_password_notify_phone() {
+    @RequestMapping("reset_password/start")
+    public ApiResult start_reset_password(@RequestParam String username,
+                                          HttpServletRequest request, HttpSession session) {
+        if (!geetestController.verify_captcha(GeetestLib.RequestData.loadFromParam(request), request))
+            return new ApiResult(403, "未通过人机验证");
+
+        UserEntity user = userRepository.findUserByLoginName(username);
+        if (user == null)
+            return new ApiResult(404, "该账号不存在");
+        if (!userRepository.hasAuth(user.getUserId(), "login"))
+            return new ApiResult(401, "该账号已被禁止登录");
+
+        session.setAttribute("reset_password_user_id", user.getUserId());
         return new ApiResult();
     }
 
-    @RequestMapping("reset_password_notify_email")
-    public ApiResult reset_password_notify_email() {
+    @RequestMapping("reset_password/notify_phone")
+    public ApiResult reset_password_notify_phone(HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("reset_password_user_id");
+        if (userId == null)
+            return new ApiResult(201, "请先完成账号选择");
+        UserEntity user = userRepository.findFirstByUserId(userId);
+        if (user == null)
+            return new ApiResult(404, "该账号已被删除");
+        if (user.getPhone() == null)
+            return new ApiResult(403, "该账号没有绑定手机号");
+
+        String code = (String) session.getAttribute("reset_password_code");
+        if (code == null) {
+            code = StringHelper.randomNumberCode6();
+            session.setAttribute("reset_password_code", code);
+        }
+        return yunpianHelper.sendSmsCode(user.getPhone(), code);
+    }
+
+    @RequestMapping("reset_password/notify_email")
+    public ApiResult reset_password_notify_email(HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("reset_password_user_id");
+        if (userId == null)
+            return new ApiResult(201, "请先完成账号选择");
+        UserEntity user = userRepository.findFirstByUserId(userId);
+        if (user == null)
+            return new ApiResult(404, "该账号已被删除");
+        if (user.getEmail() == null)
+            return new ApiResult(403, "该账号没有绑定邮箱");
+
+        String code = (String) session.getAttribute("reset_password_code");
+        if (code == null) {
+            code = StringHelper.randomNumberCode6();
+            session.setAttribute("reset_password_code", code);
+        }
+        return mailHelper.sendCodeMail(user.getEmail(), code);
+    }
+
+    @RequestMapping("reset_password/code")
+    public ApiResult reset_password_by_code(@RequestParam String code, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("reset_password_user_id");
+        if (userId == null)
+            return new ApiResult(101, "请先完成账号选择");
+        UserEntity user = userRepository.findFirstByUserId(userId);
+        if (user == null)
+            return new ApiResult(404, "该账号已被删除");
+
+        String bind_code = (String) session.getAttribute("reset_password_code");
+        if (bind_code == null)
+            return new ApiResult(403, "请先获取验证码");
+        Integer error_times = (Integer) session.getAttribute("reset_password_code_error_times");
+        if (error_times == null)
+            error_times = 0;
+        if (!bind_code.equals(code)) {
+            error_times = error_times + 1;
+            if (error_times >= 5) {
+                session.removeAttribute("reset_password_code");
+                session.removeAttribute("reset_password_code_error_times");
+                return new ApiResult(201, "请重新获取验证码");
+            }
+            session.setAttribute("reset_password_code_error_times", error_times);
+            return new ApiResult(403, "验证码错误");
+        }
+
+        session.setAttribute("reset_password_auth", true);
         return new ApiResult();
     }
 
-    @RequestMapping("reset_password_by_code")
-    public ApiResult reset_password_by_code() {
+    @RequestMapping("reset_password/submit")
+    public ApiResult reset_password_submit(@RequestParam String password, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("reset_password_user_id");
+        if (userId == null)
+            return new ApiResult(101, "请先完成账号选择");
+        UserEntity user = userRepository.findFirstByUserId(userId);
+        if (user == null)
+            return new ApiResult(404, "该账号已被删除");
+        if (session.getAttribute("reset_password_auth") == null)
+            return new ApiResult(403, "未通过验证");
+
+        userRepository.save(user.setPassword(password));
+        session.removeAttribute("reset_password_auth");
+        session.removeAttribute("reset_password_user_id");
         return new ApiResult();
     }
 }

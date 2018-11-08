@@ -7,6 +7,7 @@ import com.xinsane.auth.account.filter.CsrfFilter;
 import com.xinsane.auth.account.helper.StringHelper;
 import com.xinsane.auth.account.repository.LoginAuthTokenRepository;
 import com.xinsane.auth.account.repository.SiteRepository;
+import com.xinsane.auth.account.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,13 +23,16 @@ import java.sql.Timestamp;
 @RequestMapping(method = RequestMethod.GET)
 public class UserController implements CsrfFilter.CsrfInterface {
 
+    private final UserRepository userRepository;
     private final SiteRepository siteRepository;
     private final LoginAuthTokenRepository loginAuthTokenRepository;
 
     @Autowired
-    public UserController(SiteRepository siteRepository, LoginAuthTokenRepository loginAuthTokenRepository) {
+    public UserController(UserRepository userRepository, SiteRepository siteRepository,
+                          LoginAuthTokenRepository loginAuthTokenRepository) {
         this.siteRepository = siteRepository;
         this.loginAuthTokenRepository = loginAuthTokenRepository;
+        this.userRepository = userRepository;
     }
 
     @RequestMapping("login")
@@ -41,9 +45,35 @@ public class UserController implements CsrfFilter.CsrfInterface {
         return "user/register";
     }
 
-    @RequestMapping("reset_password")
+    @RequestMapping("forget-password")
     public String reset_password() {
-        return "user/reset-password";
+        return "user/forget-password/start";
+    }
+
+    @RequestMapping("forget-password/auth")
+    public String reset_password_auth(HttpSession session, Model model) {
+        if (session.getAttribute("reset_password_auth") != null)
+            return "redirect:/forget-password/reset";
+
+        Integer userId = (Integer) session.getAttribute("reset_password_user_id");
+        if (userId == null)
+            return "redirect:/forget-password";
+        UserEntity user = userRepository.findFirstByUserId(userId);
+
+        // TODO: 调用公共错误页面
+        if (user == null)
+            return "redirect:/forget-password";
+
+        model.addAttribute("email", user.getEmail());
+        model.addAttribute("phone", user.getPhone());
+        return "user/forget-password/auth";
+    }
+
+    @RequestMapping("forget-password/reset")
+    public String reset_password_submit(HttpSession session) {
+        if (session.getAttribute("reset_password_auth") == null)
+            return "redirect:/forget-password/auth";
+        return "user/forget-password/reset";
     }
 
     @RequestMapping({"/", "/admin"})

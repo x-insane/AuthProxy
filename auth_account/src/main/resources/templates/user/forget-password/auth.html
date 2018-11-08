@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="_csrf_key" th:content="${_csrf_key}"/>
+    <meta name="_csrf_token" th:content="${_csrf_token}"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/reset-password.css}" href="./css/reset-password.css">
+    <title>找回密码 - 用户认证系统</title>
+</head>
+<body>
+
+<div class="main-frame">
+    <header>
+        <div class="title">用户认证系统 - 找回密码</div>
+    </header>
+
+    <div th:if="${phone}" class="item-frame phone-frame close">
+        <header>通过手机 <span th:text="${phone}"></span> 验证</header>
+        <div class="content">
+            <form onsubmit="return false">
+                <div class="form-item">
+                    <label for="code-phone">手机验证码</label>
+                    <input class="small" type="text" id="code-phone" name="code" required autocomplete="off">
+                    <a class="send" href="javascript:">发送验证码</a>
+                </div>
+                <div class="result"></div>
+                <div class="submit-frame">
+                    <button class="submit">提交验证</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${email}" class="item-frame email-frame close">
+        <header>通过邮箱 <span th:text="${email}"></span> 验证</header>
+        <div class="content">
+            <form onsubmit="return false">
+                <div class="form-item">
+                    <label for="code-email">邮箱验证码</label>
+                    <input class="small" type="text" id="code-email" name="code" required autocomplete="off">
+                    <a class="send" href="javascript:">发送验证码</a>
+                </div>
+                <div class="result"></div>
+                <div class="submit-frame">
+                    <button class="submit">提交验证</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="empty-frame" th:if="not ${phone} and not ${email}">
+        <p th:text="没有可用的验证方式"></p>
+    </div>
+
+    <div class="item-frame close">
+        <a href="../login.html" th:href="@{/login}"><header>返回登录</header></a>
+    </div>
+</div>
+
+<script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script th:src="@{/js/common/csrf.js}"></script>
+<script th:src="@{/js/reset-password/auth.js}" src="../js/reset-password/auth.js"></script>
+</body>
+</html>

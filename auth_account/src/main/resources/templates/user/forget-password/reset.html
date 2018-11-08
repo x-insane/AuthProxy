@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="_csrf_key" th:content="${_csrf_key}"/>
+    <meta name="_csrf_token" th:content="${_csrf_token}"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/reset-password.css}" href="./css/reset-password.css">
+    <title>找回密码 - 用户认证系统</title>
+</head>
+<body>
+
+<div class="main-frame">
+    <header>
+        <div class="title">用户认证系统 - 找回密码</div>
+    </header>
+    <form onsubmit="return false">
+        <div class="form-item">
+            <label for="password">新密码</label>
+            <input type="password" name="password" id="password" required>
+        </div>
+        <div class="form-item">
+            <label for="repeat-password">重复新密码</label>
+            <input type="password" id="repeat-password" required>
+        </div>
+        <div class="result"></div>
+        <div class="submit-from">
+            <button class="submit">提交</button>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script th:src="@{/js/common/csrf.js}"></script>
+<script th:src="@{/js/reset-password/reset.js}" src="../js/reset-password/reset.js"></script>
+</body>
+</html>

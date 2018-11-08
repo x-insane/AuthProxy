@@ -7,9 +7,6 @@ function ApiHelper(url, json) {
         body: JSON.stringify(json)
     })
     .then(res => res.json())
-    .catch(e => {
-        console.log(e)
-    })
 }
 
 export default ApiHelper;

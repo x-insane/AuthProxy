@@ -37,9 +37,11 @@ public interface UserRepository extends CrudRepository<UserEntity, Integer> {
             "INNER JOIN AuthGlobalUserEntity au ON au.userId=?1 AND au.authId=a.authId")
     List<Integer> getUserAuthId(int userId);
 
+    @Query("FROM UserEntity u WHERE u.username=?1 OR u.phone=?1 OR u.email=?1")
+    UserEntity findUserByLoginName(String loginName);
+
+    UserEntity findFirstByUserId(Integer userId);
     UserEntity findFirstByUsername(String username);
-    UserEntity findFirstByEmail(String email);
-    UserEntity findFirstByPhone(String phone);
     boolean existsByPhone(String phone);
     boolean existsByEmail(String email);
 }
