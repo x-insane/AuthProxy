@@ -41,8 +41,8 @@ class Geetest extends React.Component {
                     });
                 });
                 captchaObj.onSuccess(() => {
-                    if (this.onSuccess)
-                        this.onSuccess()
+                    if (this.props.onSuccess)
+                        this.props.onSuccess()
                 });
                 that.captchaObj = captchaObj
             })

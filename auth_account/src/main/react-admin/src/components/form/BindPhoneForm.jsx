@@ -1,13 +1,14 @@
 import React from "react";
-import {Button, message} from "antd";
+import {Button, message, Spin} from "antd";
 import post from "../../helper/ApiHelper";
 import Geetest from "../Geetest";
 import FormItem from "./item/FormItem";
 import FormSubmitItem from "./item/FormSubmitItem";
+import UserHelper from "../../helper/UserHelper";
 
 class BindPhoneForm extends React.Component {
     state = {
-        phone: window.user ? window.user.phone : null,
+        user: null,
         sending: false, // 发送短信状态，false 未发送，true 正在请求，number 重发等待时间（已请求成功）
         binding: false, // 是否成功发送过短信，成功发送后提交按钮才可用，此时不可修改手机号
         pending: false // 提交状态
@@ -27,8 +28,7 @@ class BindPhoneForm extends React.Component {
             return;
         const data = this.getFields();
         this.setState({
-            sending: true,
-            binding: true
+            sending: true
         });
         post("/api/user/bind_phone_send_message", data)
         .then(res => {
@@ -36,7 +36,8 @@ class BindPhoneForm extends React.Component {
                 let sending = 30;
                 const that = this;
                 that.setState({
-                    sending: sending
+                    sending: sending,
+                    binding: true
                 });
                 setTimeout(function loop() {
                     if (that.state.sending === false)
@@ -80,11 +81,12 @@ class BindPhoneForm extends React.Component {
         .then(res => {
             if (res.error === 0) {
                 message.success("绑定成功");
-                if (window.user)
-                    window.user.phone = data.phone;
+                const user = this.state.user;
+                user.phone = data.phone;
                 this.setState({
-                    phone: data.phone
-                })
+                    user: user
+                });
+                UserHelper.setUserInfo(user)
             } else {
                 message.error(res.msg);
                 this.refs.geetest.reset()
@@ -115,16 +117,23 @@ class BindPhoneForm extends React.Component {
     };
 
     componentDidMount = () => {
-        if (!this.state.phone) {
-            this.refs.geetest.onSuccess = () => {
-                this.refs.item_geetest.validate()
+        UserHelper.getUserInfo(user => {
+            if (user) {
+                this.setState({
+                    user: user
+                })
             }
-        }
+        })
     };
 
     render() {
-        return this.state.phone ?
-            <div>您已绑定手机号：{this.state.phone}</div> :
+        return !this.state.user ?
+
+        <div style={{textAlign: "center"}}>
+            <Spin />
+        </div> : (this.state.user.phone ?
+
+        <div>您已绑定手机号：{this.state.user.phone}</div> :
 
         <form ref="form" className="ant-form ant-form-horizontal" onSubmit={ this.handleSubmit }>
 
@@ -143,7 +152,9 @@ class BindPhoneForm extends React.Component {
                     return true
                 }
             } >
-                <Geetest ref="geetest"/>
+                <Geetest ref="geetest" onSuccess={() => {
+                    this.refs.item_geetest.validate()
+                }}/>
             </FormItem>
 
             <FormItem ref="item_code" name="code" label="手机验证码" required addon={
@@ -168,7 +179,7 @@ class BindPhoneForm extends React.Component {
                     </Button> : null
                 }
             </FormSubmitItem>
-        </form>
+        </form>)
     }
 }
 

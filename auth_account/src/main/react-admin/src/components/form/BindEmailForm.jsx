@@ -1,13 +1,14 @@
 import React from "react";
-import {Button, message} from "antd";
+import {Button, message, Spin} from "antd";
 import post from "../../helper/ApiHelper";
 import Geetest from "../Geetest";
 import FormItem from "./item/FormItem";
 import FormSubmitItem from "./item/FormSubmitItem";
+import UserHelper from "../../helper/UserHelper";
 
 class BindEmailForm extends React.Component {
     state = {
-        email: window.user ? window.user.email : null,
+        user: null,
         sending: false, // 发送邮件状态，false 未发送，true 正在请求，number 重发等待时间（已请求成功）
         binding: false, // 是否成功发送过邮件，成功发送后提交按钮才可用，此时不可修改手机号
         pending: false // 提交状态
@@ -27,8 +28,7 @@ class BindEmailForm extends React.Component {
             return;
         const data = this.getFields();
         this.setState({
-            sending: true,
-            binding: true
+            sending: true
         });
         message.info("发送邮件大概需要20秒，请耐心等待");
         post("/api/user/bind_email_send_message", data)
@@ -37,7 +37,8 @@ class BindEmailForm extends React.Component {
                 let sending = 30;
                 const that = this;
                 that.setState({
-                    sending: sending
+                    sending: sending,
+                    binding: true
                 });
                 message.success("邮件发送成功");
                 setTimeout(function loop() {
@@ -86,11 +87,12 @@ class BindEmailForm extends React.Component {
         .then(res => {
             if (res.error === 0) {
                 message.success("绑定成功");
-                if (window.user)
-                    window.user.email = data.email;
+                const user = this.state.user;
+                user.email = data.email;
                 this.setState({
-                    email: data.email
-                })
+                    user: user
+                });
+                UserHelper.setUserInfo(user)
             } else message.error(res.msg);
             if (res.error === 201) {
                 this.setState({
@@ -117,16 +119,23 @@ class BindEmailForm extends React.Component {
     };
 
     componentDidMount = () => {
-        if (!this.state.email) {
-            this.refs.geetest.onSuccess = () => {
-                this.refs.item_geetest.validate()
+        UserHelper.getUserInfo(user => {
+            if (user) {
+                this.setState({
+                    user: user
+                })
             }
-        }
+        })
     };
 
     render() {
-        return this.state.email ?
-            <div>您已绑定邮箱：{this.state.email}</div> :
+        return !this.state.user ?
+
+            <div style={{textAlign: "center"}}>
+                <Spin />
+            </div> : (this.state.user.email ?
+
+            <div>您已绑定邮箱：{this.state.user.email}</div> :
 
             <form ref="form" className="ant-form ant-form-horizontal" onSubmit={ this.handleSubmit }>
 
@@ -145,7 +154,9 @@ class BindEmailForm extends React.Component {
                     return true
                 }
                 } >
-                    <Geetest ref="geetest"/>
+                    <Geetest ref="geetest" onSuccess={() => {
+                        this.refs.item_geetest.validate()
+                    }}/>
                 </FormItem>
 
                 <FormItem ref="item_code" name="code" label="邮件验证码" required addon={
@@ -170,7 +181,7 @@ class BindEmailForm extends React.Component {
                         </Button> : null
                     }
                 </FormSubmitItem>
-            </form>
+            </form>)
     }
 }
 
