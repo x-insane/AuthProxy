@@ -1,7 +1,7 @@
 package com.xinsane.auth.account.controller.rest;
 
 import com.geetest.sdk.GeetestLib;
-import com.xinsane.auth.account.helper.RequestHelper;
+import com.xinsane.auth.account.helper.direct.RequestHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

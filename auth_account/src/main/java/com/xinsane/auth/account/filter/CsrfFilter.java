@@ -1,7 +1,7 @@
 package com.xinsane.auth.account.filter;
 
 import com.google.gson.Gson;
-import com.xinsane.auth.account.helper.StringHelper;
+import com.xinsane.auth.account.helper.direct.StringHelper;
 import com.xinsane.auth.account.transfer.ApiResult;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;

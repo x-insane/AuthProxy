@@ -1,4 +1,4 @@
-package com.xinsane.auth.account.helper;
+package com.xinsane.auth.account.helper.direct;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;

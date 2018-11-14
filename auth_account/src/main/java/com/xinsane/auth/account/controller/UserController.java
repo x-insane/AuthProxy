@@ -4,7 +4,7 @@ import com.xinsane.auth.account.entity.AuthSiteEntity;
 import com.xinsane.auth.account.entity.LoginAuthTokenEntity;
 import com.xinsane.auth.account.entity.UserEntity;
 import com.xinsane.auth.account.filter.CsrfFilter;
-import com.xinsane.auth.account.helper.StringHelper;
+import com.xinsane.auth.account.helper.direct.StringHelper;
 import com.xinsane.auth.account.repository.LoginAuthTokenRepository;
 import com.xinsane.auth.account.repository.SiteRepository;
 import com.xinsane.auth.account.repository.UserRepository;

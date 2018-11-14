@@ -5,10 +5,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xinsane.auth.account.controller.rest.GeetestController;
 import com.xinsane.auth.account.entity.*;
-import com.xinsane.auth.account.entity_helper.AuthHelper;
-import com.xinsane.auth.account.helper.CheckFormatHelper;
+import com.xinsane.auth.account.service.AuthService;
+import com.xinsane.auth.account.helper.direct.CheckFormatHelper;
 import com.xinsane.auth.account.helper.MailHelper;
-import com.xinsane.auth.account.helper.StringHelper;
+import com.xinsane.auth.account.helper.direct.StringHelper;
 import com.xinsane.auth.account.helper.YunpianHelper;
 import com.xinsane.auth.account.repository.AuthRepository;
 import com.xinsane.auth.account.repository.ConfigRepository;
@@ -26,19 +26,19 @@ public class AccountController {
 
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
-    private final AuthHelper authHelper;
+    private final AuthService authService;
     private final ConfigRepository configRepository;
     private final YunpianHelper yunpianHelper;
     private final MailHelper mailHelper;
     private final GeetestController geetestController;
 
     @Autowired
-    public AccountController(UserRepository userRepository, AuthHelper authHelper,
+    public AccountController(UserRepository userRepository, AuthService authService,
                              AuthRepository authRepository, ConfigRepository configRepository,
                              YunpianHelper yunpianHelper, MailHelper mailHelper,
                              GeetestController geetestController) {
         this.userRepository = userRepository;
-        this.authHelper = authHelper;
+        this.authService = authService;
         this.authRepository = authRepository;
         this.configRepository = configRepository;
         this.yunpianHelper = yunpianHelper;
@@ -64,8 +64,8 @@ public class AccountController {
     @RequestMapping("login")
     public ApiResult login(@RequestParam String username, @RequestParam String password,
                            HttpServletRequest request, HttpSession session) {
-//        if (!geetestController.verify_captcha(GeetestLib.RequestData.loadFromParam(request), request))
-//            return new ApiResult(403, "未通过人机验证");
+        if (!geetestController.verify_captcha(GeetestLib.RequestData.loadFromParam(request), request))
+            return new ApiResult(403, "未通过人机验证");
 
         UserEntity user = userRepository.findUserByLoginName(username);
         if (user == null || !user.getPassword().equals(password))
@@ -96,7 +96,7 @@ public class AccountController {
             return new ApiResult(402, "该用户名已被注册");
 
         user = userRepository.save(new UserEntity().setUsername(username).setPassword(password));
-        authHelper.addAuthWithoutCheck(user.getUserId(), authRepository.getAuthIdByAuthKey("login"));
+        authService.addAuthWithoutCheck(user.getUserId(), authRepository.getAuthIdByAuthKey("login"));
         session.setAttribute("user", user);
 
         return new ApiResult();
@@ -152,8 +152,7 @@ public class AccountController {
     }
 
     @RequestMapping("bind_phone_by_code")
-    public ApiResult bind_phone_by_code(@RequestBody String json, HttpSession session,
-                                        HttpServletRequest request) {
+    public ApiResult bind_phone_by_code(@RequestBody String json, HttpSession session) {
         UserEntity user = (UserEntity) session.getAttribute("user");
         if (user == null)
             return new ApiResult(403, "请先登录");
@@ -226,8 +225,7 @@ public class AccountController {
     }
 
     @RequestMapping("bind_email_by_code")
-    public ApiResult bind_email_by_code(@RequestBody String json, HttpSession session,
-                                        HttpServletRequest request) {
+    public ApiResult bind_email_by_code(@RequestBody String json, HttpSession session) {
         UserEntity user = (UserEntity) session.getAttribute("user");
         if (user == null)
             return new ApiResult(403, "请先登录");
